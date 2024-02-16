@@ -1,12 +1,9 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-
-#define PLAYER_SPEED 50.0f
-
-const Vector3 camera_padding = { .x = 15.f, .y = 15.0f, .z = 0.0f };
+#include "./src/input.h"
+#include "./src/defines.h"
+#include "./src/consts.h"
 
 Camera game_init_camera()
 {
@@ -27,8 +24,8 @@ int main()
 
 	Camera camera = game_init_camera();
 
-	Vector3 cube_pos = { .x = 0.0f, 0.0f, 0.0f };
-	const Vector3 cube_size = { .x = 4.0f, 1.0f, 4.0f };
+	const Vector3 cube_size = { .x = 4.0f, .y = 4.0f, .z = 4.0f };
+	Vector3 cube_pos = { .x = 0.0f, .y = cube_size.y / 2.0f, .z = 0.0f };
 
 	SetTargetFPS(60);
 	DisableCursor();
@@ -37,33 +34,17 @@ int main()
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();
-		// UpdateCamera(&camera, CAMERA_FREE);
-		if(IsKeyDown(KEY_W)) {
-			player_vel.x = -1;
-		}
-		if(IsKeyDown(KEY_S)) {
-			player_vel.x = 1;
-		}
-		if(IsKeyDown(KEY_D)) {
-			player_vel.z = -1;
-		}
-		if(IsKeyDown(KEY_A)) {
-			player_vel.z = 1;
-		}
 
-
-		player_vel = Vector3Normalize(player_vel);
+		player_vel = handle_input();
 		cube_pos = Vector3Add(cube_pos, Vector3Scale(player_vel, PLAYER_SPEED * dt));
 		camera.target = cube_pos;
 		camera.position = Vector3Add(cube_pos, camera_padding);
-
-		player_vel = Vector3Zero();
 
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
 			BeginMode3D(camera);
-				DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ 32.0f, 32.0f }, LIGHTGRAY);
+				DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ PLANE_SIZE, PLANE_SIZE }, LIGHTGRAY);
 				DrawCube((Vector3){ -16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, BLUE);
 				DrawCube((Vector3){ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIME);
 				DrawCube((Vector3){ 0.0f, 2.5f, 16.0f }, 32.0f, 5.0f, 1.0f, GOLD);
