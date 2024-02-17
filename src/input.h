@@ -3,6 +3,9 @@
 
 #include "raylib.h"
 #include "raymath.h"
+#include "./types.h"
+
+#define MOUSE_MOVE_BTN MOUSE_LEFT_BUTTON
 
 static Vector3 handle_input()
 {
@@ -23,5 +26,14 @@ static Vector3 handle_input()
 	return Vector3Normalize(player_vel);
 }
 
+static void move_by_click(GameState *gs, Vector3 ray_point)
+{
+	if (IsMouseButtonDown(MOUSE_MOVE_BTN)) {
+		gs->steps = 0;
+		gs->walking = true;
+		gs->target_pos.x = ray_point.x;
+		gs->target_pos.z = ray_point.z;
+	}
+}
 
 #endif // INPUT_H_

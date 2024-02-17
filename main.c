@@ -1,9 +1,12 @@
+#include <stdbool.h>
 #include "raylib.h"
 #include "raymath.h"
 
 #include "./src/input.h"
+#include "./src/move.h"
 #include "./src/defines.h"
 #include "./src/consts.h"
+#include "src/types.h"
 
 Camera game_init_camera()
 {
@@ -28,9 +31,38 @@ int main()
 	Vector3 cube_pos = { .x = 0.0f, .y = cube_size.y / 2.0f, .z = 0.0f };
 
 	SetTargetFPS(60);
-	DisableCursor();
+	// DisableCursor();
 
 	Vector3 player_vel = {0};
+
+	Vector3 plane_pos = Vector3Zero();
+	Vector2 plane_size = { PLANE_SIZE, PLANE_SIZE };
+
+	GameState gs = {
+		.steps = 10,
+		.walking = false,
+		.target_pos = cube_pos,
+	};
+
+
+	Object objs[] = {
+		{ .position =  { -16.0f, 2.5f, 0.0f }, .size = { 1.0f, 5.0f, 32.0f } },
+		{ .position =  { 16.0f, 2.5f, 0.0f }, .size = { 1.0f, 5.0f, 32.0f } },
+		{ .position =  { 0.0f, 2.5f, 16.0f }, .size = { 32.0f, 5.0f, 1.0f } },
+	};
+
+	const BoundingBox plain_collision = {
+		.min = {
+			.x = -plane_size.x / 2.0f,
+			.y = 0.0f,
+			.z = -plane_size.y / 2.0f
+		},
+		.max = {
+			.x = plane_size.x / 2.0f,
+			.y = 0.0f,
+			.z = plane_size.y / 2.0f
+		}
+	};
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();
@@ -40,16 +72,27 @@ int main()
 		camera.target = cube_pos;
 		camera.position = Vector3Add(cube_pos, camera_padding);
 
+		Vector2 mouse_pos = GetMousePosition();
+		Ray ray = GetMouseRay(mouse_pos, camera);
+
+		RayCollision ray_col = GetRayCollisionBox(ray, plain_collision);
+
+		move_player(&gs, &cube_pos, objs);
+		move_by_click(&gs, ray_col.point);
+
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
 			BeginMode3D(camera);
-				DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ PLANE_SIZE, PLANE_SIZE }, LIGHTGRAY);
-				DrawCube((Vector3){ -16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, BLUE);
-				DrawCube((Vector3){ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIME);
-				DrawCube((Vector3){ 0.0f, 2.5f, 16.0f }, 32.0f, 5.0f, 1.0f, GOLD);
+				DrawPlane(plane_pos, plane_size, LIGHTGRAY);
 
-				DrawCubeV(cube_pos, cube_size, BLUE);
+				DrawCubeV(objs[0].position, objs[0].size, BLUE);
+				DrawCubeV(objs[1].position, objs[1].size, LIME);
+				DrawCubeV(objs[2].position, objs[2].size, GOLD);
+
+				DrawCubeV(cube_pos, cube_size, DARKBLUE);
+
+				DrawLine3D(cube_pos, ray_col.point, BLACK);
 			EndMode3D();
 		EndDrawing();
 	}
