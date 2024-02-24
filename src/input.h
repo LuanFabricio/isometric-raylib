@@ -5,7 +5,7 @@
 #include "raymath.h"
 #include "./types.h"
 
-#define MOUSE_MOVE_BTN MOUSE_LEFT_BUTTON
+#define MOUSE_MOVE_BTN MOUSE_RIGHT_BUTTON
 
 static Vector3 handle_input()
 {
