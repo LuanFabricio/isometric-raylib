@@ -56,7 +56,7 @@ static bool handle_collision(Object *src, Vector3 move, Object *col_obj)
 		}
 		collides = true;
 	}
-	// src->position = Vector3Add(src_box.min, Vector3Scale(src->size, 0.5));
+	src->position = Vector3Add(src_box.min, Vector3Scale(src->size, 0.5));
 
 	return collides;
 }
@@ -73,7 +73,7 @@ static void move_player(GameState *gs, Vector3 *pos, Object objs[3])
 
 			for (size_t i = 0; i < 3; i++) {
 				if (handle_collision(&src, step_vec, &objs[i])) {
-					return;
+					break;
 				}
 			}
 
