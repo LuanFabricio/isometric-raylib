@@ -8,4 +8,6 @@
 
 #define PLAYER_SPEED 50.0f
 
+#define NODE_CAPACITY 4
+
 #endif // DEFINES_H_
