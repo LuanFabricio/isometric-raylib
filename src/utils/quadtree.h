@@ -7,13 +7,15 @@
 
 #define QUADTREE static
 
-QUADTREE bool AABB_contains_point(AABB aabb, Point p);
 QUADTREE QuadTree *QuadTree_new(float x, float y, float half_dimension);
 QUADTREE void QuadTree_subdivide(QuadTree *root);
 QUADTREE bool QuadTree_insert(QuadTree *root, Point p);
 QUADTREE void QuadTree_print(const QuadTree *root);
 
 #ifdef QUADTREE_IMPLEMENTATION
+#define AABB_IMPLEMENTATION
+#include "./aabb.h"
+
 QUADTREE QuadTree *QuadTree_new(float x, float y, float half_dimension)
 {
 	AABB node = {
@@ -36,17 +38,6 @@ QUADTREE QuadTree *QuadTree_new(float x, float y, float half_dimension)
 	q_ptr->south_east = NULL;
 
 	return q_ptr;
-}
-
-QUADTREE bool AABB_contains_point(AABB aabb, Point p)
-{
-	float left = aabb.center.x - aabb.half_dimension;
-	float right = aabb.center.x + aabb.half_dimension;
-	float top = aabb.center.y - aabb.half_dimension;
-	float bottom = aabb.center.y + aabb.half_dimension;
-
-	return left <= p.x && right >= p.x
-		&& top <= p.y && bottom >= p.y;
 }
 
 QUADTREE void QuadTree_subdivide(QuadTree *root)
