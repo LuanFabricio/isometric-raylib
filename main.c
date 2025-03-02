@@ -30,7 +30,7 @@ int main()
 	const Vector3 cube_size = { .x = 4.0f, .y = 4.0f, .z = 4.0f };
 	Vector3 cube_pos = { .x = 0.0f, .y = cube_size.y / 2.0f, .z = 0.0f };
 
-	SetTargetFPS(60);
+	SetTargetFPS(75);
 	// DisableCursor();
 
 	Vector3 player_vel = {0};
@@ -77,7 +77,7 @@ int main()
 
 		RayCollision ray_col = GetRayCollisionBox(ray, plain_collision);
 
-		move_player(&gs, &cube_pos, objs);
+		move_player(&gs, &cube_pos, objs, GetFrameTime());
 		move_by_click(&gs, ray_col.point);
 
 		BeginDrawing();
@@ -91,6 +91,7 @@ int main()
 				DrawCubeV(objs[2].position, objs[2].size, GOLD);
 
 				DrawCubeV(cube_pos, cube_size, DARKBLUE);
+				DrawSphere(cube_pos, 3, WHITE);
 
 				DrawLine3D(cube_pos, ray_col.point, BLACK);
 			EndMode3D();
